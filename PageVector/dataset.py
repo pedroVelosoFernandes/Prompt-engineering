@@ -2,10 +2,9 @@ from datasets import load_dataset
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores.pgvector import PGVector
-
-# Configurações iniciais
-import os
 import openai
+from openai import OpenAI
+import os
 from dotenv import load_dotenv, find_dotenv
 
 # Carregar variáveis de ambiente
@@ -39,12 +38,13 @@ db = PGVector.from_documents(
 )
 
 # Consulta por similaridade
-query = "Functions to find lolwest cost path" #minimum
+query = "Make codes in python beeing a solution to the problem" #minimum
 similar_docs = db.similarity_search_with_score(query, k=5)
 
+contexto = ""
 # Exibir documentos similares
 for doc, score in similar_docs:
-    print(f"Documento:\n{doc}\nRelevância: {score}\n\n")
+    contexto += f"Documento:\n{doc}\nRelevância: {score}\n\n"
 
 # benefits with LLMs
 
@@ -60,3 +60,44 @@ what we've provided in the prompt, and only pass certain segments of the text.
 
 This is powerful, as it allows us to take advantage of greater amounts of text content. We can 
 embed a large corpus of documents into chunks, and can select the relevant segments in our code. """
+
+def search_similar_documents(query, top_k=5):
+    similar_docs = db.similarity_search_with_score(query, k=top_k)
+    results = []
+    for doc, score in similar_docs:
+        results.append({"document": doc, "relevance_score": score})
+    return results
+
+# Função para criar prompt e obter resposta do ChatGPT
+def generate_response(context, query):
+    # Cria o prompt completo com o contexto e a consulta
+    prompt = f"""
+    You are a very enthusiastic and helpful assistant! Given the following sections, answer the question using only that information. 
+
+    Context sections:
+    {context}
+
+    Question: {query}
+
+    Answer in markdown format :
+    """
+
+    # Usa openai.ChatCompletion.create para gerar a resposta
+    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model="gpt-4-turbo",  # Use "gpt-4" se você tiver acesso
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=512,
+        temperature=0
+    )
+
+    # Retorna a resposta gerada pelo modelo
+    return response
+
+
+print(contexto)
+
+print(generate_response(similar_docs,query))
