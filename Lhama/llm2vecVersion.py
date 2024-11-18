@@ -2,7 +2,7 @@ import torch
 from huggingface_hub import login
 from llm2vec.llm2vec import LLM2Vec
 
-login("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")
+login("")
 
 l2v = LLM2Vec.from_pretrained(
     "meta-llama/Meta-Llama-3.1-8B-Instruct",
