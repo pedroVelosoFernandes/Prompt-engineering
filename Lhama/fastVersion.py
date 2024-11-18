@@ -25,9 +25,3 @@ embedding = embeddings.embed_query("abobora")
 print(embedding)
 
 print("Embeddings gerados e salvos com sucesso!")
-# output desse codigo(tambem o pytorch gerado)
-""" Query 1: Given a web search query, retrieve relevant passages that answer the query: How much protein should a female eat
-Embedding (primeiros 5 valores): [0.06250561773777008, 0.027240829542279243, -0.043370816856622696, 0.0627388283610344, -0.01694156974554062]...
-
-Query 2: Given a web search query, retrieve relevant passages that answer the query: summit define
-Embedding (primeiros 5 valores): [-0.020673181861639023, 0.0745113343000412, -0.02960795722901821, 0.08671502023935318, 0.03077632561326027]... """
